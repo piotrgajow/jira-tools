@@ -3,6 +3,7 @@ const { DateTimeFormatter } = require('js-joda');
 const { loadIssueData } = require('../jira-api/jira-api');
 const { projectKey: JIRA_PROJECT_KEY } = require('../../config.json');
 const { JiraIssue } = require('../jira-issue/jira-issue');
+const { StoryPoints } = require('../story-points/story-point-mapper');
 
 function issueStatsCommand(issueIds) {
     const issueKeys = issueIds.map((id) => `${JIRA_PROJECT_KEY}-${id}`);
@@ -33,11 +34,13 @@ function printStatisticsForSubTasksOf(issue) {
 
 function printStatisticsFor(issue) {
     const key = issue.key;
-    const storyPoints = issue.getStoryPoints();
+    const storyPoints = StoryPoints.fromNumber(issue.getStoryPoints());
     const startDate = issue.getStartDate().format(DateTimeFormatter.ofPattern('dd/MM/yyyy HH:mm:ss'));
     const durations = issue.getDurations();
+    const inProgress = durations['In Progress'] || '';
+    const test = durations['Test'] || '';
     const totalTime = issue.getTotalTime();
-    console.log(`${key}:\t${storyPoints}, ${startDate}, ${durations['In Progress']}, ${durations['Test']}, ${totalTime}`);
+    console.log(`${key}, ${storyPoints}, ${startDate}, ${inProgress}, ${test}, ${totalTime}`);
 }
 
 module.exports = { issueStatsCommand };
