@@ -1,11 +1,12 @@
 {
   "name": "jira-tools",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Set of tools for extracting data from Jira issues",
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/index.js",
-    "test": "jest"
+    "build": "tsc",
+    "test": "jest",
+    "start": "node ./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,9 @@
   },
   "homepage": "https://github.com/piotrgajow/jira-tools#readme",
   "dependencies": {
+    "@types/lodash": "4.14.109",
+    "@types/node": "10.1.3",
+    "@types/request-promise-native": "1.0.14",
     "commander": "2.15.1",
     "fs": "0.0.1-security",
     "js-joda": "1.8.2",
@@ -29,6 +33,9 @@
     "request-promise-native": "1.0.5"
   },
   "devDependencies": {
-    "jest": "22.4.3"
+    "@types/jest": "22.2.3",
+    "jest": "22.4.3",
+    "ts-jest": "22.4.6",
+    "typescript": "2.8.3"
   }
 }
