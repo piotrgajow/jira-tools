@@ -1,9 +1,11 @@
 const { DateTimeFormatter } = require('js-joda');
 
 const { loadIssueData } = require('../jira-api/jira-api');
-const { projectKey: JIRA_PROJECT_KEY } = require('../../config.json');
+import { config } from '../../config';
 const { JiraIssue } = require('../jira-issue/jira-issue');
 const { StoryPoints } = require('../story-points/story-point-mapper');
+
+const JIRA_PROJECT_KEY = config.projectKey;
 
 function issueStatsCommand(issueIds) {
     const issueKeys = issueIds.map((id) => `${JIRA_PROJECT_KEY}-${id}`);

@@ -1,10 +1,10 @@
 const request = require('request-promise-native');
 
-const { baseUrl, authToken } = require('../../config.json');
+import { config } from '../../config';
 
-const JIRA_API_URL = `https://${baseUrl}/rest/api/2`;
+const JIRA_API_URL = `https://${config.baseUrl}/rest/api/2`;
 const HEADERS = {
-    Authorization: `Basic ${authToken}`
+    Authorization: `Basic ${config.authToken}`
 };
 
 function loadIssueData(id) {
