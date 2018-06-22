@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const program = require('commander');
+import * as program from 'commander';
 
-const { issueStatsCommand } = require('./commands/issue-stats-command');
+import { issueStatsCommand } from './commands/issue-stats-command';
 
 program
     .version('0.0.1')
