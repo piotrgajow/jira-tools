@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { convert } from 'js-joda';
+import { convert, LocalDateTime } from 'js-joda';
 
 export class TestIssue {
 
@@ -9,12 +9,12 @@ export class TestIssue {
     ) {
     }
 
-    storyPoints(sp) {
+    storyPoints(sp:number): TestIssue {
         this.fields.customfield_10008 = sp;
         return this;
     }
 
-    history(field, date, from, to) {
+    history(field: string, date: LocalDateTime, from: string, to: string): TestIssue {
         const entry = {
             created: convert(date).toDate(),
             items: [
@@ -29,18 +29,18 @@ export class TestIssue {
         return this;
     }
 
-    type(typeName) {
+    type(typeName: string): TestIssue {
         this.fields.issuetype = { name: typeName };
         return this;
     }
 
-    subtask(key) {
+    subtask(key: string): TestIssue {
         this.fields.subtasks.push({ key });
         return this;
     }
 
-    build() {
-        return _.assign({}, this);
+    build(): any {
+        return _.assign<any, any>({}, this);
     }
 
 }

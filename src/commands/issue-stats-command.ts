@@ -7,14 +7,14 @@ import { StoryPoints } from '../story-points/story-points';
 
 const JIRA_PROJECT_KEY = config.projectKey;
 
-export function issueStatsCommand(issueIds) {
+export function issueStatsCommand(issueIds: number[]): void {
     const issueKeys = issueIds.map((id) => `${JIRA_PROJECT_KEY}-${id}`);
-    issueKeys.forEach((key) => loadStatsForIssue(key));
+    issueKeys.forEach((key: string) => loadStatsForIssue(key));
 }
 
-function loadStatsForIssue(key) {
+function loadStatsForIssue(key: string): void {
     loadIssueData(key)
-        .then((issueData) => {
+        .then((issueData: any) => {
             const issue = new JiraIssue(key, issueData);
             if (issue.isUserStory()) {
                 printStatisticsForSubTasksOf(issue);
@@ -24,20 +24,20 @@ function loadStatsForIssue(key) {
         })
 }
 
-function printStatisticsForSubTasksOf(issue) {
+function printStatisticsForSubTasksOf(issue: JiraIssue): void {
     issue.getSubtaskKeys().forEach((subtaskKey) => {
         loadIssueData(subtaskKey)
-            .then((subtaskData) => {
+            .then((subtaskData: any) => {
                 const subtask = new JiraIssue(subtaskKey, subtaskData);
                 printStatisticsFor(subtask);
             })
     });
 }
 
-function printStatisticsFor(issue) {
+function printStatisticsFor(issue: JiraIssue): void {
     const key = issue.key;
     const storyPoints = StoryPoints[issue.getStoryPoints()];
-    const startDate = issue.getStartDate().format(DateTimeFormatter.ofPattern('dd/MM/yyyy HH:mm:ss'));
+    const startDate = issue.getStartDate() ? issue.getStartDate().format(DateTimeFormatter.ofPattern('dd/MM/yyyy HH:mm:ss')) : 'no start date';
     const durations = issue.getDurations();
     const inProgress = durations['In Progress'] || '';
     const test = durations['Test'] || '';

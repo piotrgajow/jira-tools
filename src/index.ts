@@ -10,13 +10,13 @@ program
 
 program
     .command('encode <text>')
-    .action((text) => {
-        console.log(Buffer.from(text).toString('base64'));
+    .action((text: string) => {
+        console.log(new Buffer(text).toString('base64'));
     });
 
 program
     .command('issue-stats [ids...]')
-    .action((ids) => {
+    .action((ids: number[]) => {
         issueStatsCommand(ids);
     });
 

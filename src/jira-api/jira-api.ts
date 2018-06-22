@@ -7,7 +7,7 @@ const HEADERS = {
     Authorization: `Basic ${config.authToken}`
 };
 
-export function loadIssueData(id: number): Promise<any> {
+export function loadIssueData(id: string): Promise<any> {
     return request(getOptions(`issue/${id}?expand=changelog`)).catch(console.log);
 }
 

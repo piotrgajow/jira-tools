@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { ChronoUnit,  LocalDateTime,  nativeJs } from 'js-joda';
+import { ChronoUnit, convert, LocalDateTime, nativeJs } from 'js-joda';
 
 const PATH_STORY_POINTS = 'fields.customfield_10008';
 const PATH_HISTORY_ITEMS = 'changelog.histories';
@@ -25,11 +25,11 @@ export class JiraIssue {
     ) {
     }
 
-    getStoryPoints() {
+    getStoryPoints(): number {
         return _.get(this.data, PATH_STORY_POINTS);
     }
 
-    getStartDate() {
+    getStartDate(): LocalDateTime {
         const history = _.get(this.data, PATH_HISTORY_ITEMS, []);
         const startHistoryItem = _.findLast(history, (it) => {
             const item = it.items[0];
@@ -42,47 +42,46 @@ export class JiraIssue {
         return startDate ? dateToLocalDateTime(startDate) : undefined;
     }
 
-    getTotalTime() {
+    getTotalTime(): number {
         const startDate = this.getStartDate();
         const endDate = getEndDate(this.data);
         return startDate && endDate ? calculateTimeDifference(startDate, endDate) : undefined;
     }
 
-    getDurations() {
-        let status;
-        let date;
+    getDurations(): any {
+        let status: string;
+        let date: LocalDateTime;
         const durations = {};
         _.forEachRight(_.get(this.data, PATH_HISTORY_ITEMS), (history) => {
             const statusChange = history.items.find((item) => item.field === FIELD_HISTORY_ITEM_STATUS);
             if (statusChange) {
+                const statusDate = history.created ? dateToLocalDateTime(history.created) : undefined;
                 if (status) {
-                    durations[status] = (durations[status] || 0) + calculateTimeDifference(date, history.created);
+                    durations[status] = (durations[status] || 0) + calculateTimeDifference(date, statusDate);
                 }
                 status = statusChange.toString;
-                date = history.created;
+                date = statusDate;
             }
         });
         return durations;
     }
 
-    isUserStory() {
+    isUserStory(): boolean {
         return _.get(this.data, PATH_TYPE) === TYPE_USER_STORY;
     }
 
-    getSubtaskKeys() {
+    getSubtaskKeys(): string[] {
         const subtasks = _.get(this.data, PATH_SUBTASKS);
         return subtasks ? subtasks.map((it) => it.key) : [];
     }
 
 }
 
-function calculateTimeDifference(fromString, toString) {
-    const from = new Date(fromString);
-    const to = new Date(toString);
+function calculateTimeDifference(fromDate: LocalDateTime, toDate: LocalDateTime): number {
+    const from = convert(fromDate).toDate();
+    const to = convert(toDate).toDate();
     if (from.toDateString() === to.toDateString()) {
-        const fromTime = LocalDateTime.from(nativeJs(from));
-        const toTime = LocalDateTime.from(nativeJs(to));
-        const hours = fromTime.until(toTime, ChronoUnit.HOURS);
+        const hours = fromDate.until(toDate, ChronoUnit.HOURS);
         return hours > WORK_HOURS_PER_DAY ? 1 : hours / WORK_HOURS_PER_DAY;
     } else {
         from.setHours(0, 0, 0, 0);
@@ -98,17 +97,17 @@ function calculateTimeDifference(fromString, toString) {
     }
 }
 
-function isWorkDay(date) {
+function isWorkDay(date: Date): boolean {
     const SATURDAY = 6;
     const SUNDAY = 0;
     return date.getDay() !== SUNDAY && date.getDay() !== SATURDAY;
 }
 
-function dateToLocalDateTime(date) {
+function dateToLocalDateTime(date: Date): LocalDateTime {
     return LocalDateTime.from(nativeJs(new Date(date)))
 }
 
-function getEndDate(data) {
+function getEndDate(data: any): LocalDateTime {
     const history = _.get(data, PATH_HISTORY_ITEMS, []);
     const endHistoryItem = _.findLast(history, (it) => {
         return _.some(it.items, (item) => {
