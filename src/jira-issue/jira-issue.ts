@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { ChronoUnit,  LocalDateTime,  nativeJs } = require('js-joda');
+import * as _ from 'lodash';
+import { ChronoUnit,  LocalDateTime,  nativeJs } from 'js-joda';
 
 const PATH_STORY_POINTS = 'fields.customfield_10008';
 const PATH_HISTORY_ITEMS = 'changelog.histories';
@@ -17,11 +17,12 @@ const TYPE_USER_STORY = 'Story';
 
 const WORK_HOURS_PER_DAY = 8;
 
-class JiraIssue {
+export class JiraIssue {
 
-    constructor(key, data) {
-        this.key = key;
-        this.data = data;
+    constructor(
+        public key: string,
+        private data: any,
+    ) {
     }
 
     getStoryPoints() {
@@ -119,5 +120,3 @@ function getEndDate(data) {
     const endDate = _.get(endHistoryItem, FIELD_HISTORY_ITEM_CREATED);
     return endDate ? dateToLocalDateTime(endDate) : undefined;
 }
-
-module.exports = { JiraIssue };

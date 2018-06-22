@@ -1,7 +1,7 @@
-const { LocalDateTime } = require('js-joda');
+import { LocalDateTime } from 'js-joda';
 
-const { JiraIssue } = require('./jira-issue');
-const { TestIssue } = require('./test-issue');
+import { JiraIssue } from './jira-issue';
+import { TestIssue } from './test-issue';
 
 describe('JiraIssue', () => {
 

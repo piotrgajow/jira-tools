@@ -1,11 +1,12 @@
-const _ = require('lodash');
-const { convert } = require('js-joda');
+import * as _ from 'lodash';
+import { convert } from 'js-joda';
 
-class TestIssue {
+export class TestIssue {
 
-    constructor() {
-        this.fields = { subtasks: [] };
-        this.changelog = { histories: [] };
+    constructor(
+        private fields: any = { subtasks: [] },
+        private changelog: any = { histories: [] },
+    ) {
     }
 
     storyPoints(sp) {
@@ -41,6 +42,5 @@ class TestIssue {
     build() {
         return _.assign({}, this);
     }
-}
 
-module.exports = { TestIssue };
+}
