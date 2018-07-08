@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const program = require('commander');
+import * as program from 'commander';
 
-const { issueStatsCommand } = require('./commands/issue-stats-command');
+import { issueStatsCommand } from './commands/issue-stats-command';
 
 program
     .version('0.0.1')
@@ -10,13 +10,13 @@ program
 
 program
     .command('encode <text>')
-    .action((text) => {
-        console.log(Buffer.from(text).toString('base64'));
+    .action((text: string) => {
+        console.log(new Buffer(text).toString('base64'));
     });
 
 program
     .command('issue-stats [ids...]')
-    .action((ids) => {
+    .action((ids: number[]) => {
         issueStatsCommand(ids);
     });
 

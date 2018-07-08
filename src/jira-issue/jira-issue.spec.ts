@@ -1,7 +1,7 @@
-const { LocalDateTime } = require('js-joda');
+import { LocalDateTime } from 'js-joda';
 
-const { JiraIssue } = require('./jira-issue');
-const { TestIssue } = require('./test-issue');
+import { JiraIssue } from './jira-issue';
+import { TestIssue } from './test-issue';
 
 describe('JiraIssue', () => {
 
@@ -17,7 +17,7 @@ describe('JiraIssue', () => {
             { data: new TestIssue().storyPoints(13).build(), expected: 13 },
         ].forEach(({ data, expected }) => {
 
-            test('should return story point estimation', () => {
+            it('should return story point estimation', () => {
                 subject = new JiraIssue(ISSUE_KEY, data);
                 const result = subject.getStoryPoints();
                 expect(result).toEqual(expected);
@@ -49,7 +49,7 @@ describe('JiraIssue', () => {
             },
         ].forEach(({ data, expected }) => {
 
-            test('should return start date of issue', () => {
+            it('should return start date of issue', () => {
                 subject = new JiraIssue(ISSUE_KEY, data);
                 const result = subject.getStartDate();
                 expect(result).toEqual(expected);
@@ -62,7 +62,7 @@ describe('JiraIssue', () => {
     describe('getDurations', () => {
 
         [
-            { data: {}, expected: {} },
+            { data: {}, expected: { inProgress: undefined, test: undefined } },
             {
                 data: new TestIssue()
                     .history('status', LocalDateTime.of(2018, 4, 26, 8), 'Test', 'Done')
@@ -99,7 +99,7 @@ describe('JiraIssue', () => {
             },
         ].forEach(({ data, expected }) => {
 
-            test('should return duration in different statuses', () => {
+            it('should return duration in different statuses', () => {
                 subject = new JiraIssue(ISSUE_KEY, data);
                 const result = subject.getDurations();
                 expect(result['In Progress']).toEqual(expected.inProgress);
@@ -118,7 +118,7 @@ describe('JiraIssue', () => {
             { data: new TestIssue().type('Sub-task').build(), expected: false },
         ].forEach(({ data, expected }) => {
 
-            test('should return proper boolean value', () => {
+            it('should return proper boolean value', () => {
                 subject = new JiraIssue(ISSUE_KEY, data);
                 const result = subject.isUserStory();
                 expect(result).toEqual(expected);
@@ -135,7 +135,7 @@ describe('JiraIssue', () => {
             { data: new TestIssue().subtask('TEST-1').subtask('TEST-15').build(), expected: ['TEST-1', 'TEST-15'] },
         ].forEach(({ data, expected }) => {
 
-            test('should return list of subtask keys', () => {
+            it('should return list of subtask keys', () => {
                 subject = new JiraIssue(ISSUE_KEY, data);
                 const result = subject.getSubtaskKeys();
                 expect(result).toEqual(expected);
@@ -185,7 +185,7 @@ describe('JiraIssue', () => {
             },
         ].forEach(({ data, expected }) => {
 
-            test('should return total work time', () => {
+            it('should return total work time', () => {
                 subject = new JiraIssue(ISSUE_KEY, data);
                 const result = subject.getTotalTime();
                 expect(result).toEqual(expected);

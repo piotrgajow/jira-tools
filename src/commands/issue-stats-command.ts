@@ -1,18 +1,20 @@
-const { DateTimeFormatter } = require('js-joda');
+import { DateTimeFormatter } from 'js-joda';
 
-const { loadIssueData } = require('../jira-api/jira-api');
-const { projectKey: JIRA_PROJECT_KEY } = require('../../config.json');
-const { JiraIssue } = require('../jira-issue/jira-issue');
-const { StoryPoints } = require('../story-points/story-point-mapper');
+import { loadIssueData } from '../jira-api/jira-api';
+import { config } from '../../config';
+import { JiraIssue } from '../jira-issue/jira-issue';
+import { StoryPoints } from '../story-points/story-points';
 
-function issueStatsCommand(issueIds) {
+const JIRA_PROJECT_KEY = config.projectKey;
+
+export function issueStatsCommand(issueIds: number[]): void {
     const issueKeys = issueIds.map((id) => `${JIRA_PROJECT_KEY}-${id}`);
-    issueKeys.forEach((key) => loadStatsForIssue(key));
+    issueKeys.forEach((key: string) => loadStatsForIssue(key));
 }
 
-function loadStatsForIssue(key) {
+function loadStatsForIssue(key: string): void {
     loadIssueData(key)
-        .then((issueData) => {
+        .then((issueData: any) => {
             const issue = new JiraIssue(key, issueData);
             if (issue.isUserStory()) {
                 printStatisticsForSubTasksOf(issue);
@@ -22,25 +24,23 @@ function loadStatsForIssue(key) {
         })
 }
 
-function printStatisticsForSubTasksOf(issue) {
+function printStatisticsForSubTasksOf(issue: JiraIssue): void {
     issue.getSubtaskKeys().forEach((subtaskKey) => {
         loadIssueData(subtaskKey)
-            .then((subtaskData) => {
+            .then((subtaskData: any) => {
                 const subtask = new JiraIssue(subtaskKey, subtaskData);
                 printStatisticsFor(subtask);
             })
     });
 }
 
-function printStatisticsFor(issue) {
+function printStatisticsFor(issue: JiraIssue): void {
     const key = issue.key;
-    const storyPoints = StoryPoints.fromNumber(issue.getStoryPoints());
-    const startDate = issue.getStartDate().format(DateTimeFormatter.ofPattern('dd/MM/yyyy HH:mm:ss'));
+    const storyPoints = StoryPoints[issue.getStoryPoints()];
+    const startDate = issue.getStartDate() ? issue.getStartDate().format(DateTimeFormatter.ofPattern('dd/MM/yyyy HH:mm:ss')) : 'no start date';
     const durations = issue.getDurations();
     const inProgress = durations['In Progress'] || '';
     const test = durations['Test'] || '';
     const totalTime = issue.getTotalTime();
     console.log(`${key}, ${storyPoints}, ${startDate}, ${inProgress}, ${test}, ${totalTime}`);
 }
-
-module.exports = { issueStatsCommand };

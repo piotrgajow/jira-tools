@@ -1,19 +1,20 @@
-const _ = require('lodash');
-const { convert } = require('js-joda');
+import * as _ from 'lodash';
+import { convert, LocalDateTime } from 'js-joda';
 
-class TestIssue {
+export class TestIssue {
 
-    constructor() {
-        this.fields = { subtasks: [] };
-        this.changelog = { histories: [] };
+    constructor(
+        private fields: any = { subtasks: [] },
+        private changelog: any = { histories: [] },
+    ) {
     }
 
-    storyPoints(sp) {
+    storyPoints(sp:number): TestIssue {
         this.fields.customfield_10008 = sp;
         return this;
     }
 
-    history(field, date, from, to) {
+    history(field: string, date: LocalDateTime, from: string, to: string): TestIssue {
         const entry = {
             created: convert(date).toDate(),
             items: [
@@ -28,19 +29,18 @@ class TestIssue {
         return this;
     }
 
-    type(typeName) {
+    type(typeName: string): TestIssue {
         this.fields.issuetype = { name: typeName };
         return this;
     }
 
-    subtask(key) {
+    subtask(key: string): TestIssue {
         this.fields.subtasks.push({ key });
         return this;
     }
 
-    build() {
-        return _.assign({}, this);
+    build(): any {
+        return _.assign<any, any>({}, this);
     }
-}
 
-module.exports = { TestIssue };
+}
